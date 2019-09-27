@@ -1,0 +1,42 @@
+
+
+
+All values little-endian
+ +00 2B Magic number (0xd5aa)
+ +02 1B Version number (currently 1)
+ +03 1B (pad byte)
+ +04 4B CRC-32
+ +08 4B Length of data
+ +0c 2B Offset to start of data
+ +xx [data]
+
+
+// store文件格式设计
+
+little-endian
+
++ 0x00 4B Magic number (CUBO)
++ 0x04 2B Version number (currently 1.0)
++ 0x06 1B (pad byte)
++ 0x07 1B (chunk size)
++ 0x08 1B (flag extension) (1:0)
++ 0x09 - 0x04 0x00 (chunk indexs or index indexs )
+
+
+@store{
+
+
+
+}
+
+
+
+const packageStore = cuboStore({
+    root: './cubo-packages'
+})
+
+packageStore('vue').getItem('key')
+packageStore('vue').setItem('key', null)
+
+
+const 
