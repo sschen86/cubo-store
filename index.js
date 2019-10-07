@@ -8,7 +8,7 @@ const packageStore = cuboStore({
 })
 
 ;(async function () {
-    //  return
+      
     const t1 = Date.now()
 
     await packageStore('vue').getItem('package.json')
@@ -18,7 +18,7 @@ const packageStore = cuboStore({
         version: '1.0.0',
         // pp: Array(1024 * 4 * 1000).join('#'),
     }))
-
+    return
     await packageStore('vue').getItem('package.json')
 
     await packageStore('vue').setItem('a.js', JSON.stringify({
@@ -50,6 +50,13 @@ const packageStore = cuboStore({
 
     console.info(Date.now() - t1 + 'ms')
 })()
+
+const buff = Buffer.alloc(16)
+buff.writeInt16LE(43, 0)
+buff.writeInt16LE(44, 2)
+
+
+
 
 // const fd = fs.openSync('./unit16.txt', 'a')
 
