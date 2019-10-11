@@ -13,27 +13,36 @@ All values little-endian
 
 // formats
 
-little-endian
+use little-endian
+
+FIRST 4K (起始4K文件头)
 
 + 0x00 4B Magic number (CUBO)
 + 0x04 2B Version number (currently 1.0)
-+ 0x06 1B (pad byte)
-+ 0x07 1B (chunk size)
-+ 0x08 1B (flag extension) (1:0) 1：扩展索引区，2：无扩展索引区，存在扩展区的，则头文件存的是数据索引，否则是索引的地址索引，通过索引的地址索引找到数据索引
-+ 0x09 - 0x04 0x00 (chunk indexs or index indexs )
++ 0x06 1B (chunk size)
++ 0x07 1B (flag extension) (1:0) 1：扩展索引区，2：无扩展索引区，存在扩展区的，则头文件存的是数据索引，否则是索引的地址索引，通过索引的地址索引找到数据索引
++ 0x08 - 0x04 0x00 (chunk indexs or index indexs )
 
 chunk-indexs-format （数据的地址索引）
 
-+ 0x00 xB resourceId
++ 0x00 1B*n resourceId
 + 0xxx 1B : (索引开始)
 + 0xxx (2B+2B)*n  index#size,index#size [] (连续索引区)
 + 0xxx 2B , (索引区分隔符)
 + 0xxx 2B*n indexs (非连续索引区)
 + 0xxx 2B ;  (索引区结束符) 
 
+
+fileId:chunkIndex(2B) chunkSize(2B) ... endIndex1==[0x00,0x00](2B) chunkIndex(2B)... endIndex2[0x00,0x00](2B)
+...
+eg. package.json:5#12 8#16 0#0 
+
+
+
 index-indexs-format (索引的地址索引)
 
 + 0x00 2B*n indexs (索引区)
+
 
 
 
@@ -76,3 +85,35 @@ packageStore('vue').setItem('key', null)
 
 
 const 
+
+EMPTY_BUFFER_4K
+EMPTY_BUFFER_HEADER
+
+
+buffer4K
+
+
+header // 文件头
+
+partitionTable 分区表
+layers // 文件层索引表
+chunks // 
+chunkIndex // 块索引
+chunkPer // 块单位
+chunkSize // 块大小
+
+
+
+const MAGIC_STRING = 'CUBOSTORE'
+const MAJOR_VERSION = 1
+const MINOR_VERSION = 0
+
+
+partitionTable = { chunkSize:1, chunkByte:chunkSize * BYTE_4K, chunks: [chunkIndex, ...] }
+dataLayers = { }
+dataLayers[id] = { chunks:[ chunkIndex, ... ], type:'json' }
+usedChunks = [ chunkIndex, ... ]
+
+
+
+
