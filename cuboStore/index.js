@@ -34,38 +34,25 @@ class Store {
     async setItem (layerId, value) {
         await openStore.call(this)
 
-        if (value == null) {
+        if (value == null || value === '') {
             if (layerId in this.layers) {
-                await this.removeLayer(layerId)
+                await removeLayer.call(this, layerId)
             }
         } else {
-            await this.setLayer(layerId, value)
+            await setLayer.call(this, layerId, value)
         }
     }
 
-    async setLayer (layerId, value) {
-        // 写入数据
-        const newLayerChunkIndexs = await this.chunks.write(Buffer.from(value))
+    async getList () {
+        await openStore.call(this)
 
-        // 创建数据新索引
-        const newLayers = { ...this.layers }
-        newLayers[layerId] = newLayerChunkIndexs
-
-        // 写入数据新索引
-        const newIndexsTable = await this.chunks.writeIndexsTable(newLayers)
-
-        // 更新索引表
-        await this.header.update(newIndexsTable)
-
-        // 更新数据索引
-        this.layers = newLayers
-
-        // 释放无用数据块
-        await this.chunks.updateUsed(this.header.indexsTable, this.layers)
+        return Object.keys(this.layers)
     }
 
-    async removeLayer (layerId) {
-
+    async clear () {
+        this.fd = await afs.open(this.path, 'w')
+        await updateIndexsTable.call(this, {})
+        this.fd = await afs.open(this.path, 'r+')
     }
 }
 
@@ -115,4 +102,36 @@ async function openStore () {
     }
     openStoreWaits.length = 0
     this.state = STATE.compile
+}
+
+async function setLayer (layerId, value) {
+    // 写入数据
+    const newLayerChunkIndexs = await this.chunks.write(Buffer.from(value))
+
+    // 创建数据新索引
+    const newLayers = { ...this.layers }
+    newLayers[layerId] = newLayerChunkIndexs
+
+    await updateIndexsTable.call(this, newLayers)
+}
+
+async function removeLayer (layerId) {
+    // 创建数据新索引
+    const newLayers = { ...this.layers }
+    delete newLayers[layerId]
+    await updateIndexsTable.call(this, newLayers)
+}
+
+async function updateIndexsTable (newLayers) {
+    // 写入数据新索引
+    const newIndexsTable = await this.chunks.writeIndexsTable(newLayers)
+
+    // 更新索引表
+    await this.header.update(newIndexsTable)
+
+    // 更新数据索引
+    this.layers = newLayers
+
+    // 释放无用数据块
+    await this.chunks.updateUsed(this.header.indexsTable, this.layers)
 }

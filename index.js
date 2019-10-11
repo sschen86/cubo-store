@@ -20,25 +20,26 @@ const packageStore = cuboStore({
     //  await packageStore('vue').setItem('index.js', 'export default = {a:22}')
     // await packageStore('vue').setItem('index.js', 'export default = {a:2233232}')
     // await packageStore('vue').setItem('index2222222222222222222222.js', 'export default = {a:2233232}')
-    const content = Array(1024 * 4 * 1000 * 1).join('ABCDEFG')
+    // const content = Array(1024 * 4 * 100 * 1).join('ABCDEFG')
     const t2 = Date.now()
-    const value = await packageStore('vue').setItem('bigfile.js', content)
+    // const value = await packageStore('vue').setItem('bigfile.js', content)
     // console.info('length', value.length)
     const t3 = Date.now()
-    console.info(content.length / 1024 / 1024)
-
+    // console.info(content.length / 1024 / 1024)
+    // console.info(await packageStore('vue').getList())
     console.info(t3 - t2)
+    // console.info(await packageStore('vue').getItem('bigfile.js'))
 
     for (let i = 0; i < 100; i++) {
-        const fileId = `${i}${i}${i}${i}${i}${i}${i}${i}${i}${i}.js`
-        const fileContent = Array(1000).join(fileId)
-        // await packageStore('vue').setItem(fileId, fileContent)
+        // const fileId = `${i}${i}${i}${i}${i}${i}${i}${i}${i}${i}.js`
+        // const fileContent = Array(1000).join(fileId)
+        // await packageStore('vue').setItem(fileContent, fileContent)
 
-        //   console.info('###value###', await packageStore('vue').getItem(fileId))
+        // console.info('###value###', await packageStore('vue').getItem(fileId))
     }
 
     for (let i = 0; i < 100; i++) {
-        //  await packageStore('vue').setItem(`${i}.js`, '' + i)
+        // await packageStore('vue').setItem(`${i}.js`, '' + i)
 
         // console.info(await packageStore('vue').getItem(`${i}.js`))
 
@@ -46,8 +47,13 @@ const packageStore = cuboStore({
         //  console.info('###value###', value)
     }
 
-    await packageStore('vue').setItem('2.js', '888888888')
-    console.info(await packageStore('vue').getItem('2.js'))
+    // await packageStore('vue').setItem('2.js', '888888888')
+    // console.info(await packageStore('vue').getList('2.js'))
+
+    // await packageStore('vue').clear()
+    // await packageStore('vue').setItem('bigfile.js', 'xx')
+    // console.info(await packageStore('vue').getList('2.js'))
+    console.info(Date.now() - t1 + 'ms')
     return
     await packageStore('vue').getItem('package.json')
 
